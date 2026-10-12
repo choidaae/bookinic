@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>필사 자판기</title>
+<meta name="theme-color" content="#1d4a42">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+  <a class="home" href="../index.html">← 북크닉 홈</a>
+    <button class="help-btn" type="button" id="help-open" aria-label="도움말 보기">?</button>
+  </div>
+  <main class="machine" id="machine">
+    <header class="sign">
+      <div class="bulbs top" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <h1>필사 <span>자판기</span></h1>
+      <div class="bulbs bottom" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    </header>
+
+    <section class="window" aria-labelledby="question">
+      <p class="question" id="question">오늘은 어떤 문장이 필요한가요?</p>
+      <div class="shelves" id="shelves" role="radiogroup" aria-labelledby="question"></div>
+    </section>
+
+    <section class="controls">
+      <div class="led" id="led" aria-live="polite"><strong>마음을 하나 골라 주세요</strong><small>진열창의 책을 눌러요</small></div>
+      <button type="button" class="draw" id="drawBtn" disabled>문장<br>뽑기</button>
+    </section>
+
+    <div class="outlet" aria-hidden="true">
+      <div class="outlet-hole" id="hole"><div class="flap" id="flap">PUSH</div></div>
+    </div>
+  </main>
+</div>
+
+<div class="overlay" id="overlay" hidden>
+  <article class="card" id="card" aria-live="polite">
+    <span class="tape" id="tape" aria-hidden="true"></span>
+    <button type="button" class="close" id="closeBtn" aria-label="마음 다시 고르기">×</button>
+    <p class="meta"><span id="cardCat"></span><span id="cardNo"></span></p>
+    <div class="sentence-box" id="sentenceBox"><blockquote class="sentence" id="cardText"></blockquote></div>
+    <div class="source">
+      <div class="cover" id="cardCover"></div>
+      <div class="source-text">
+        <p class="book-title" id="cardBook"></p>
+        <p class="author" id="cardAuthor"></p>
+      </div>
+    </div>
+    <p class="tnote" id="cardNote" hidden>† 원문을 직접 옮긴 문장이라 출간된 번역본과 표현이 다를 수 있어요.</p>
+  </article>
+  <nav class="actions" aria-label="다음 행동">
+    <button type="button" id="againBtn">다른 문장</button>
+    <button type="button" id="saveBtn">카드 저장</button>
+    <button type="button" id="copyBtn" class="primary">필사 모드</button>
+  </nav>
+</div>
+
+<div class="copy" id="copy" hidden role="dialog" aria-modal="true" aria-label="필사 모드">
+  <div class="copy-tools">
+    <button type="button" id="smallerBtn" aria-label="글자 작게">가−</button>
+    <button type="button" id="biggerBtn" aria-label="글자 크게">가+</button>
+    <button type="button" id="closeCopyBtn">닫기</button>
+  </div>
+  <div class="copy-body">
+    <p class="copy-text" id="copyText"></p>
+    <p class="copy-source" id="copySource"></p>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+<!-- 도움말 (도움말 버튼을 눌렀을 때만 열림) -->
+<div class="help" id="help" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+  <div class="help-card">
+    <div class="help-body">
+      <h2 class="help-title" id="help-title">필사 자판기 이용 방법</h2>
+      <p class="help-lead">마음에 드는 문장을 뽑아 엽서에 옮겨 적고, 나만의 엽서로 꾸며 보세요.</p>
+      <ol class="help-steps">
+        <li><span><b>마음 고르기</b>오늘 기분에 맞는 책을 눌러요. 고르기 어렵다면 ‘아무 문장이나 좋아요’를 눌러요.</span></li>
+        <li><span><b>문장 뽑기</b>노란 버튼을 누르면 자판기에서 문장 카드가 나와요.</span></li>
+        <li><span><b>다시 뽑기</b>마음에 들지 않으면 ‘다른 문장’을 눌러 다시 뽑을 수 있어요.</span></li>
+        <li><span><b>엽서에 옮겨 적기</b>‘필사 모드’를 누르면 문장이 크게 보여요. 휴대폰을 옆에 두고 엽서에 천천히 옮겨 적어요. 책 제목과 지은이도 함께 적어 주세요.</span></li>
+        <li><span><b>엽서 꾸미기</b>문장이 떠올리게 하는 그림, 색, 스티커로 엽서를 자유롭게 꾸며요.</span></li>
+      </ol>
+      <p class="help-tip"><span>TIP</span>‘카드 저장’을 누르면 문장 카드를 사진으로 간직할 수 있어요.</p>
+    </div>
+    <div class="help-foot"><button class="help-close" type="button" id="help-close">알겠어요</button></div>
+  </div>
+</div>
+<script>
+(function () {
+  "use strict";
+  var help = document.getElementById("help");
+  var openBtn = document.getElementById("help-open");
+  var closeBtn = document.getElementById("help-close");
+  function open() { help.hidden = false; closeBtn.focus(); }
+  function close() { if (help.hidden) return; help.hidden = true; openBtn.focus(); }
+  openBtn.addEventListener("click", open);
+  closeBtn.addEventListener("click", close);
+  help.addEventListener("click", function (e) { if (e.target === help) close(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") close(); });
+})();
+</script>
+</body>
+</html>

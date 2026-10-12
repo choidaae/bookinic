@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>북크닉 미니 활동</title>
+<meta name="theme-color" content="#fdf1e6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  /* 파스텔 숲 속 도서관: 구름·동글 나무 → 가랜드 달린 크림색 책장 → 파스텔 책등 3권. 한 화면, 단일 테마 */
+  :root {
+    color-scheme: light;
+    --sky: #fdf1e6;
+    --sky-low: #e6f5ec;
+    --sun: #ffe9a8;
+    --cloud: #ffffff;
+    --leaf-1: #bfe5c8;
+    --leaf-2: #a6d9b8;
+    --leaf-3: #d5efd0;
+    --trunk: #d9b48f;
+    --hill: #cdebd6;
+    --shelf: #f6dcc2;
+    --shelf-in: #fff4e8;
+    --shelf-lo: #e8c4a2;
+    --ink: #4f4560;
+    --ink-soft: #85799a;
+    --white: #ffffff;
+
+    --book-1: #9fdac2; /* 필사 자판기 · 민트 */
+    --book-2: #a9cff3; /* 시 완성 게임 · 하늘 */
+    --book-3: #f7b9cb; /* 북 타로 운세 · 핑크 */
+    --flag-1: #f7b9cb;
+    --flag-2: #ffe08f;
+    --flag-3: #a9cff3;
+    --flag-4: #c9b8f0;
+    --flag-5: #9fdac2;
+
+    --display: "Bagel Fat One", "Jua", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --body: "Gowun Dodum", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: var(--body);
+    color: var(--ink);
+    word-break: keep-all;
+    background: linear-gradient(180deg, var(--sky) 0%, var(--sky) 40%, var(--sky-low) 100%);
+    -webkit-tap-highlight-color: transparent;
+  }
+  [hidden] { display: none !important; }
+
+  /* ── 배경: 해 · 구름 · 동글 나무 · 언덕 ── */
+  .scene { position: fixed; inset: 0; overflow: hidden; pointer-events: none; }
+  .sun {
+    position: absolute;
+    top: 5vh; right: 8vw;
+    width: 74px; height: 74px;
+    border-radius: 50%;
+    background: var(--sun);
+    box-shadow: 0 0 0 12px rgba(255, 233, 168, 0.45), 0 0 0 26px rgba(255, 233, 168, 0.2);
+  }
+  .cloud {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    width: 86px; height: 26px;
+    border-radius: 99px;
+    background: var(--cloud);
+    opacity: 0.9;
+    animation: float-x var(--t, 18s) ease-in-out infinite alternate;
+  }
+  .cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    bottom: 8px;
+    border-radius: 50%;
+    background: var(--cloud);
+  }
+  .cloud::before { left: 14px; width: 32px; height: 32px; }
+  .cloud::after { left: 38px; width: 40px; height: 40px; }
+  @keyframes float-x { to { transform: translateX(28px); } }
+
+  .tree {
+    position: absolute;
+    bottom: var(--b, 12vh);
+    left: var(--x);
+    width: var(--s);
+    height: calc(var(--s) * 1.45);
+    animation: bob 4s ease-in-out infinite alternate;
+    animation-delay: var(--d, 0s);
+  }
+  .tree::before { /* 줄기 */
+    content: "";
+    position: absolute;
+    left: 50%; bottom: 0;
+    width: 16%; height: 42%;
+    transform: translateX(-50%);
+    border-radius: 99px;
+    background: var(--trunk);
+  }
+  .tree::after { /* 동글 잎 */
+    content: "";
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.55) 0 12%, transparent 13%), var(--c, var(--leaf-1));
+  }
+  @keyframes bob { to { transform: translateY(-4px) rotate(1.5deg); } }
+  .hill {
+    position: absolute;
+    left: -20%; right: -20%; bottom: -10vh;
+    height: 30vh;
+    border-radius: 50% 50% 0 0;
+    background: var(--hill);
+  }
+  .spark {
+    position: absolute;
+    left: var(--x);
+    bottom: -12px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--c);
+    animation: rise var(--t, 9s) linear infinite;
+    animation-delay: var(--d, 0s);
+    opacity: 0.85;
+  }
+  .spark.heart { border-radius: 0; width: 10px; height: 10px; background: none; }
+  .spark.heart::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: var(--c);
+    clip-path: path("M5 9 C1 6 0 4 0 2.7 0 1.2 1.2 0 2.6 0 3.6 0 4.5 0.6 5 1.5 5.5 0.6 6.4 0 7.4 0 8.8 0 10 1.2 10 2.7 10 4 9 6 5 9Z");
+  }
+  @keyframes rise {
+    0% { transform: translate(0, 0); opacity: 0; }
+    10% { opacity: 0.9; }
+    50% { transform: translate(14px, -50vh); }
+    100% { transform: translate(-6px, -100vh); opacity: 0; }
+  }
+
+  /* ── 화면 ── */
+  .page {
+    position: relative;
+    height: 100%;
+    max-width: 460px;
+    max-height: 860px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(26px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+  }
+  .sign { flex: none; }
+  .kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    padding: 4px 12px 3px;
+    border-radius: 99px;
+    background: var(--white);
+    box-shadow: 0 3px 0 rgba(79, 69, 96, 0.08);
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .kicker i { width: 8px; height: 8px; border-radius: 50%; background: var(--leaf-2); }
+  h1 {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(3.2rem, 17vw, 4.5rem);
+    line-height: 1;
+    color: var(--ink);
+    letter-spacing: 0.02em;
+    text-shadow: 3px 3px 0 var(--white), -3px 3px 0 var(--white), 3px -3px 0 var(--white), -3px -3px 0 var(--white), 0 7px 0 rgba(79, 69, 96, 0.12);
+  }
+  .badge {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 5px 14px 3px;
+    border-radius: 99px;
+    background: var(--book-3);
+    color: var(--white);
+    font-family: var(--display);
+    font-size: 1.05rem;
+    line-height: 1.3;
+    box-shadow: 0 3px 0 #e79bb1;
+  }
+  .lead { margin: 12px 0 0; font-size: 0.98rem; line-height: 1.6; color: var(--ink-soft); }
+
+  /* ── 책장 ── */
+  .shelf {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    max-height: 420px;
+    margin: 26px 0 0;
+    padding: 26px 14px 0;
+    display: flex;
+    flex-direction: column;
+    border-radius: 26px 26px 14px 14px;
+    background: var(--shelf-in);
+    box-shadow: 0 0 0 10px var(--shelf), 0 10px 0 10px var(--shelf-lo), 0 22px 30px 10px rgba(79, 69, 96, 0.1);
+  }
+  /* 가랜드 */
+  .garland { position: absolute; top: -6px; left: 6%; right: 6%; height: 26px; display: flex; justify-content: space-between; pointer-events: none; }
+  .garland::before {
+    content: "";
+    position: absolute;
+    left: -4%; right: -4%; top: -2px;
+    height: 14px;
+    border-bottom: 2px solid var(--ink-soft);
+    border-radius: 0 0 50% 50%;
+    opacity: 0.45;
+  }
+  .garland i {
+    width: 16px; height: 20px;
+    margin-top: calc(6px + var(--sag, 0px));
+    background: var(--c);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+  .books {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 7px;
+  }
+  /* 화분 */
+  .plant { flex: none; position: relative; width: 34px; height: 54px; align-self: flex-end; }
+  .plant::before { /* 잎 */
+    content: "";
+    position: absolute;
+    left: 3px; top: 0;
+    width: 28px; height: 32px;
+    border-radius: 50% 50% 45% 45%;
+    background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.5) 0 14%, transparent 15%), var(--leaf-2);
+  }
+  .plant::after { /* 화분 */
+    content: "";
+    position: absolute;
+    left: 4px; bottom: 0;
+    width: 26px; height: 24px;
+    border-radius: 4px 4px 9px 9px;
+    background: var(--flag-2);
+    box-shadow: inset 0 5px 0 rgba(255, 255, 255, 0.5);
+  }
+  .deco {
+    flex: none;
+    width: var(--w, 16px);
+    height: var(--h, 60%);
+    border-radius: 8px 8px 3px 3px;
+    background: var(--c);
+    box-shadow: inset 0 8px 0 rgba(255, 255, 255, 0.35);
+  }
+  .board {
+    flex: none;
+    height: 14px;
+    margin: 0 -14px;
+    border-radius: 0 0 6px 6px;
+    background: var(--shelf);
+    box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  /* ── 책등 버튼 ── */
+  .spine {
+    position: relative;
+    flex: 0 1 88px;
+    min-width: 0;
+    height: var(--h, 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 22px 7px 12px;
+    border-radius: 18px 18px 6px 6px;
+    color: var(--ink);
+    text-decoration: none;
+    background:
+      linear-gradient(90deg, transparent 0 12%, rgba(255, 255, 255, 0.35) 12% 20%, transparent 20%),
+      var(--c);
+    box-shadow: inset 0 -6px 0 rgba(79, 69, 96, 0.08), 0 4px 0 rgba(79, 69, 96, 0.1);
+    transition: transform 0.3s cubic-bezier(0.3, 1.6, 0.5, 1);
+    cursor: pointer;
+  }
+  /* 스티치 띠 */
+  .spine::before, .spine::after {
+    content: "";
+    position: absolute;
+    left: 8px; right: 8px;
+    border-top: 2.5px dashed rgba(255, 255, 255, 0.85);
+  }
+  .spine::before { top: 11px; }
+  .spine::after { bottom: 52px; }
+  .spine:hover, .spine:focus-visible { transform: translateY(-12px) rotate(-1.5deg); }
+  .spine:focus-visible { outline: 3px solid var(--ink-soft); outline-offset: 4px; }
+  .spine.pull { transform: translateY(-48px) rotate(-4deg) scale(1.03); transition-duration: 0.35s; }
+
+  .label {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    margin-top: 4px;
+    padding: 12px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: var(--white);
+    box-shadow: 0 3px 0 rgba(79, 69, 96, 0.08);
+  }
+  .title {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    font-family: var(--display);
+    font-size: clamp(1.15rem, 5.2vw, 1.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    /* 띄어쓰기는 아주 좁은 공백(<i class="sp"></i>)으로 적어 세로 간격을 줄임 */
+  }
+  .sub {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    margin-right: 6px;
+    font-size: 0.72rem;
+    line-height: 1;
+    letter-spacing: -0.06em;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  /* 세로 글자의 띄어쓰기: 공백 대신 좁은 칸(.sp)으로 간격을 줄임 */
+  .sp { display: inline-block; inline-size: 0.32em; }
+
+  .glyph {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 32px; height: 32px;
+    margin-top: 12px;
+    border-radius: 50%;
+    background: var(--white);
+  }
+  .glyph svg { width: 18px; height: 18px; }
+  .glyph path { fill: var(--c); stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .hint { flex: none; margin: 22px 0 0; font-size: 0.92rem; color: var(--ink-soft); }
+  .credit { flex: none; margin: 4px 0 0; font-size: 0.8rem; color: var(--ink-soft); opacity: 0.8; }
+
+  @media (max-height: 640px) {
+    .page { padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
+    h1 { font-size: 3rem; }
+    .lead, .sub { display: none; }
+    .shelf { margin-top: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="scene" aria-hidden="true" id="scene">
+  <div class="sun"></div>
+  <div class="cloud" style="--x:6%;--y:9vh;--t:16s"></div>
+  <div class="cloud" style="--x:58%;--y:20vh;--t:21s"></div>
+  <div class="tree" style="--x:-6%;--s:110px;--c:var(--leaf-2);--b:13vh"></div>
+  <div class="tree" style="--x:14%;--s:70px;--c:var(--leaf-3);--b:12vh;--d:-1.5s"></div>
+  <div class="tree" style="--x:80%;--s:100px;--c:var(--leaf-1);--b:13vh;--d:-.8s"></div>
+  <div class="tree" style="--x:68%;--s:62px;--c:var(--leaf-2);--b:12vh;--d:-2.2s"></div>
+  <div class="hill"></div>
+</div>
+
+<main class="page">
+  <header class="sign">
+    <p class="kicker"><i></i>숲 속 도서관</p>
+    <h1>북크닉</h1>
+    <span class="badge">미니 활동</span>
+    <p class="lead">책장에서 하고 싶은 책을 한 권 꺼내 보세요.</p>
+  </header>
+
+  <nav class="shelf" aria-label="미니 활동">
+    <div class="garland" aria-hidden="true">
+      <i style="--c:var(--flag-1)"></i><i style="--c:var(--flag-2);--sag:3px"></i><i style="--c:var(--flag-3);--sag:6px"></i>
+      <i style="--c:var(--flag-4);--sag:8px"></i><i style="--c:var(--flag-5);--sag:8px"></i><i style="--c:var(--flag-1);--sag:6px"></i>
+      <i style="--c:var(--flag-2);--sag:3px"></i><i style="--c:var(--flag-3)"></i>
+    </div>
+    <div class="books">
+      <span class="plant" aria-hidden="true"></span>
+
+      <a class="spine" href="filsa/index.html" style="--c:var(--book-1);--h:94%">
+        <span class="label"><span class="title">필사<i class="sp"></i>자판기</span><span class="sub">마음<i class="sp"></i>따라<i class="sp"></i>문장<i class="sp"></i>뽑기</span></span>
+        <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20l3.5-1L19 7.5 16.5 5 5 16.5z"/></svg></span>
+      </a>
+      <a class="spine" href="poem/index.html" style="--c:var(--book-2);--h:100%">
+        <span class="label"><span class="title">시<i class="sp"></i>완성<i class="sp"></i>게임</span><span class="sub">구절<i class="sp"></i>맞춰<i class="sp"></i>시<i class="sp"></i>잇기</span></span>
+        <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20c-4.5-3-8-6-8-10a4 4 0 018-1.5A4 4 0 0120 10c0 4-3.5 7-8 10z"/></svg></span>
+      </a>
+      <a class="spine" href="tarot/index.html" style="--c:var(--book-3);--h:90%">
+        <span class="label"><span class="title">북<i class="sp"></i>타로<i class="sp"></i>운세</span><span class="sub">오늘의<i class="sp"></i>책<i class="sp"></i>운세</span></span>
+        <span class="glyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.5l2.4 5.4 5.9.6-4.4 4 1.3 5.8L12 16.3l-5.2 3 1.3-5.8-4.4-4 5.9-.6z"/></svg></span>
+      </a>
+
+      <span class="deco" aria-hidden="true" style="--c:var(--flag-4);--h:58%;--w:16px"></span>
+    </div>
+    <div class="board" aria-hidden="true"></div>
+  </nav>
+
+  <p class="hint">책등을 누르면 활동이 시작돼요</p>
+  <p class="credit">2026 향파도서관 북크닉</p>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // 떠오르는 파스텔 방울과 하트
+  var scene = document.getElementById("scene");
+  var colors = ["#f7b9cb", "#ffe08f", "#a9cff3", "#c9b8f0", "#9fdac2"];
+  for (var i = 0; i < 12; i++) {
+    var s = document.createElement("span");
+    s.className = "spark" + (i % 3 === 0 ? " heart" : "");
+    s.style.setProperty("--x", (4 + Math.random() * 92).toFixed(1) + "%");
+    s.style.setProperty("--c", colors[i % colors.length]);
+    s.style.setProperty("--t", (9 + Math.random() * 7).toFixed(1) + "s");
+    s.style.setProperty("--d", (Math.random() * -14).toFixed(1) + "s");
+    scene.appendChild(s);
+  }
+
+  // 책을 서가에서 꺼내는 동작 뒤에 이동
+  Array.prototype.forEach.call(document.querySelectorAll(".spine"), function (a) {
+    a.addEventListener("click", function (e) {
+      if (reduce || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
+      a.classList.add("pull");
+      setTimeout(function () { location.href = a.getAttribute("href"); }, 380);
+    });
+  });
+  window.addEventListener("pageshow", function () {
+    Array.prototype.forEach.call(document.querySelectorAll(".spine.pull"), function (a) { a.classList.remove("pull"); });
+  });
+})();
+</script>
+</body>
+</html>
