@@ -256,6 +256,8 @@
 
   // ---------- 카드 이미지 저장 ----------
   var W = 1080, H = 1350;
+  var CARD_NOTE = '† 원문을 직접 옮긴 문장이라 출간된 번역본과 표현이 다를 수 있어요.';
+  var CARD_SIGN = '2026 북크닉 필사 자판기';
   function loadImg(url) {
     return new Promise(function (res) {
       if (!url) return res(null);
@@ -328,16 +330,20 @@
     ctx.font = '30px "Gowun Dodum", sans-serif'; ctx.fillStyle = '#6f675a';
     wrap(ctx, authorLine(q), tw).slice(0, 3).forEach(function (l, i) { ctx.fillText(l, tx, cy + 52 + bl.length * 50 + i * 42); });
     ctx.font = '24px "Gowun Dodum", sans-serif'; ctx.fillStyle = '#9a917f';
-    if (q.translated) ctx.fillText('† 원문을 직접 옮긴 문장이라 출간된 번역본과 표현이 다를 수 있어요.', L, H - 150);
+    if (q.translated) ctx.fillText(CARD_NOTE, L, H - 150);
     ctx.textAlign = 'center'; ctx.fillStyle = '#e0789a'; ctx.font = '36px "Jua", sans-serif';
-    ctx.fillText('2026 북크닉 필사 자판기', W / 2, H - 86);
+    ctx.fillText(CARD_SIGN, W / 2, H - 86);
     return cv;
   }
   function prepareImage(q) {
     if (state.image && state.image.no === q.no) return state.image.promise;
+    // 한글 웹폰트는 글자 묶음별로 나뉘어 있어서, 카드에 들어갈 글자를 알려 줘야 그 묶음을 모두 받아 옴
     var fonts = document.fonts && document.fonts.load ? Promise.all([
-      document.fonts.load('66px "Gowun Batang"'), document.fonts.load('700 36px "Gowun Batang"'),
-      document.fonts.load('30px "Gowun Dodum"'), document.fonts.load('36px "Jua"')
+      document.fonts.load('66px "Gowun Batang"', q.text),
+      document.fonts.load('700 36px "Gowun Batang"', bookLine(q) + q.title),
+      document.fonts.load('30px "Gowun Dodum"', cat(q.cat).name + 'No.' + pad(q.no) + authorLine(q) +
+        (q.translated ? CARD_NOTE : '')),
+      document.fonts.load('36px "Jua"', CARD_SIGN)
     ]).catch(function () {}) : Promise.resolve();
     var entry = { no: q.no, blob: null };
     entry.promise = Promise.all([fonts, loadImg(coverUrl(q))]).then(function (r) {
