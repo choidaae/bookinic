@@ -330,7 +330,7 @@
     ctx.font = '24px "Gowun Dodum", sans-serif'; ctx.fillStyle = '#9a917f';
     if (q.translated) ctx.fillText('† 원문을 직접 옮긴 문장이라 출간된 번역본과 표현이 다를 수 있어요.', L, H - 150);
     ctx.textAlign = 'center'; ctx.fillStyle = '#e0789a'; ctx.font = '36px "Jua", sans-serif';
-    ctx.fillText('향파 도서관 필사 자판기', W / 2, H - 86);
+    ctx.fillText('2026 북크닉 필사 자판기', W / 2, H - 86);
     return cv;
   }
   function prepareImage(q) {
