@@ -1,10 +1,11 @@
 # 북크닉 미니 활동
 
 숲 속 도서관 메인 화면에서 책등을 눌러 세 가지 활동으로 들어갑니다.
+책장 아래 **보너스 이벤트**를 누르면 안내 창이 열리고, **북크닉 사진 보내기**로 카카오톡 오픈채팅방에 들어가 사진을 보냅니다.
 
 ```
 bookcnic/
-├─ index.html          메인 화면 (숲 속 도서관 · 책등 버튼)
+├─ index.html          메인 화면 (숲 속 도서관 · 책등 버튼 · 보너스 이벤트 안내 창)
 ├─ filsa/              필사 자판기
 │  ├─ index.html
 │  ├─ style.css
@@ -26,6 +27,10 @@ bookcnic/
 - 책 색: `index.html`의 `--book-1`(필사 자판기), `--book-2`(시 완성 게임), `--book-3`(북 타로 운세)
 - 책 이름·설명: `<a class="spine">` 안의 `.title`, `.sub`
 - 활동을 더 넣으려면 `<a class="spine">` 하나를 복사해 `href`와 글자만 바꾸면 됩니다.
+
+## 보너스 이벤트 고치기
+- 안내 문구: `index.html`의 `<dialog class="sheet">` 안
+- 오픈채팅방 주소: `<a class="kakao" href="https://open.kakao.com/o/spM141Ri">`의 `href`
 
 ## 필사 자판기 표지
 `filsa/data.js`의 `yes24` 상품번호로 `https://image.yes24.com/goods/{번호}/XL` 표지를 보여 줍니다.

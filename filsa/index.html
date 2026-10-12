@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>필사 자판기</title>
-<meta name="theme-color" content="#1d4a42">
+<meta name="theme-color" content="#fdf1e6">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Jua&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
   </article>
   <nav class="actions" aria-label="다음 행동">
     <button type="button" id="againBtn">다른 문장</button>
-    <button type="button" id="saveBtn">카드 저장</button>
+    <button type="button" id="saveBtn">카드 공유</button>
     <button type="button" id="copyBtn" class="primary">필사 모드</button>
   </nav>
 </div>
@@ -76,6 +76,18 @@
 
 <div class="toast" id="toast" role="status" hidden></div>
 
+<!-- 카드 저장 (카카오톡 등 앱 안 브라우저에서 '카드 공유'를 눌렀을 때) -->
+<div class="save-sheet" id="saveSheet" role="dialog" aria-modal="true" aria-labelledby="saveTitle" hidden>
+  <div class="save-card">
+    <h2 class="save-title" id="saveTitle">카드 저장하기</h2>
+    <p class="save-lead" id="saveGuide"></p>
+    <img class="save-img" id="saveImg" alt="문장 카드 이미지">
+    <p class="save-tip">이미지를 꾹 눌러 저장할 수도 있어요. (휴대폰에 따라 안 될 수 있어요)</p>
+    <button type="button" class="save-main" id="externalBtn">다른 브라우저로 열기</button>
+    <button type="button" class="save-close" id="closeSaveBtn">닫기</button>
+  </div>
+</div>
+
 <script src="data.js"></script>
 <script src="app.js"></script>
 
@@ -89,10 +101,10 @@
         <li><span><b>마음 고르기</b>오늘 기분에 맞는 책을 눌러요. 고르기 어렵다면 ‘아무 문장이나 좋아요’를 눌러요.</span></li>
         <li><span><b>문장 뽑기</b>노란 버튼을 누르면 자판기에서 문장 카드가 나와요.</span></li>
         <li><span><b>다시 뽑기</b>마음에 들지 않으면 ‘다른 문장’을 눌러 다시 뽑을 수 있어요.</span></li>
-        <li><span><b>엽서에 옮겨 적기</b>‘필사 모드’를 누르면 문장이 크게 보여요. 휴대폰을 옆에 두고 엽서에 천천히 옮겨 적어요. 책 제목과 지은이도 함께 적어 주세요.</span></li>
+        <li><span><b>엽서에 옮겨 적기</b>‘필사 모드’를 누르면 문장이 크게 보여요. 휴대폰을 옆에 두고 엽서에 천천히 옮겨 적어요.</span></li>
         <li><span><b>엽서 꾸미기</b>문장이 떠올리게 하는 그림, 색, 스티커로 엽서를 자유롭게 꾸며요.</span></li>
       </ol>
-      <p class="help-tip"><span>TIP</span>‘카드 저장’을 누르면 문장 카드를 사진으로 간직할 수 있어요.</p>
+      <p class="help-tip"><span>TIP</span>‘카드 공유’를 누르면 문장 카드를 간직할 수 있어요.</p>
     </div>
     <div class="help-foot"><button class="help-close" type="button" id="help-close">알겠어요</button></div>
   </div>

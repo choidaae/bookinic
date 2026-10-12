@@ -196,6 +196,7 @@
     $('cardAuthor').textContent = authorLine(q);
     $('cardNote').hidden = !q.translated;
     renderCover(q);
+    prepareImage(q); // 공유 버튼을 누르기 전에 카드 이미지를 미리 만들어 둠
 
     var overlay = $('overlay');
     overlay.hidden = false;
@@ -298,7 +299,7 @@
 
     var L = 110, w = W - 220;
     ctx.font = '32px "Gowun Dodum", sans-serif';
-    ctx.fillStyle = '#1d4a42'; ctx.fillText(cat(q.cat).name, L, 170);
+    ctx.fillStyle = '#4f9a7e'; ctx.fillText(cat(q.cat).name, L, 170);
     ctx.textAlign = 'right'; ctx.fillStyle = '#6f675a'; ctx.fillText('No.' + pad(q.no), W - L, 170); ctx.textAlign = 'left';
 
     var size = 66, ls, lh;
@@ -328,8 +329,8 @@
     wrap(ctx, authorLine(q), tw).slice(0, 3).forEach(function (l, i) { ctx.fillText(l, tx, cy + 52 + bl.length * 50 + i * 42); });
     ctx.font = '24px "Gowun Dodum", sans-serif'; ctx.fillStyle = '#9a917f';
     if (q.translated) ctx.fillText('† 원문을 직접 옮긴 문장이라 출간된 번역본과 표현이 다를 수 있어요.', L, H - 150);
-    ctx.textAlign = 'center'; ctx.fillStyle = '#1d4a42'; ctx.font = '36px "Jua", sans-serif';
-    ctx.fillText('필사 자판기', W / 2, H - 86);
+    ctx.textAlign = 'center'; ctx.fillStyle = '#e0789a'; ctx.font = '36px "Jua", sans-serif';
+    ctx.fillText('향파 도서관 필사 자판기', W / 2, H - 86);
     return cv;
   }
   function prepareImage(q) {
@@ -353,7 +354,7 @@
       var blob = r[0], dl = r[1];
       if (!blob) return toast('카드 이미지를 만들지 못했어요. 다시 눌러 주세요');
       var name = '필사카드_' + pad(q.no) + '.png';
-      if (!dl) return shareOrDownload(blob, name);
+      if (!dl) return IN_APP ? showSaveSheet(blob) : shareOrDownload(blob, name);
       return dl.save({ filename: name, data: blob }).then(function () {
         toast('카드 이미지를 저장했어요');
       }, function (e) {
@@ -382,6 +383,38 @@
     toast('카드 이미지를 저장했어요');
   }
 
+  // 카카오톡 등 앱 안 브라우저: 공유 창 · 파일 내려받기가 막혀 있음
+  // → 카드 이미지를 보여 주고(꾹 눌러 저장), 카톡이면 같은 카드를 기본 브라우저로 열어 줌
+  var UA = navigator.userAgent || '';
+  var KAKAO = /KAKAOTALK/i.test(UA);
+  var IN_APP = KAKAO || /Instagram|FBAN|FBAV|NAVER\(inapp|Line\/|everytimeApp|DaumApps/i.test(UA);
+  var saveUrl = null;
+  function showSaveSheet(blob) {
+    if (saveUrl) URL.revokeObjectURL(saveUrl);
+    saveUrl = URL.createObjectURL(blob);
+    $('saveImg').src = saveUrl;
+    $('saveGuide').textContent = KAKAO
+      ? '카카오톡 안에서는 카드를 바로 저장할 수 없어요. 아래 버튼을 누르면 같은 카드가 크롬·사파리에서 열려요. 거기서 ‘카드 공유’를 한 번 더 눌러 주세요.'
+      : '이 앱 안에서는 카드를 바로 저장할 수 없어요. 오른쪽 위 메뉴(⋮ 또는 ···)에서 ‘다른 브라우저로 열기’를 누른 뒤 ‘카드 공유’를 다시 눌러 주세요.';
+    $('externalBtn').hidden = !KAKAO;
+    $('saveSheet').hidden = false;
+    $('closeSaveBtn').focus();
+  }
+  function closeSaveSheet() { $('saveSheet').hidden = true; $('saveBtn').focus(); }
+  function openExternal() {
+    var q = state.current;
+    var url = location.href.split('#')[0] + (q ? '#q' + q.no : '');
+    location.href = 'kakaotalk://web/openExternal?url=' + encodeURIComponent(url);
+  }
+  // 바깥 브라우저로 넘어왔을 때 같은 카드 다시 열기 (예: filsa/index.html#q37)
+  function openFromHash() {
+    var m = /^#q(\d+)$/.exec(location.hash);
+    if (!m) return;
+    var q = QUOTES.filter(function (x) { return x.no === Number(m[1]); })[0];
+    if (history.replaceState) history.replaceState(null, '', location.pathname + location.search);
+    if (q) showCard(q);
+  }
+
   // ---------- 연결 ----------
   buildShelves();
   $('drawBtn').addEventListener('click', draw);
@@ -392,9 +425,14 @@
   $('closeCopyBtn').addEventListener('click', closeCopy);
   $('smallerBtn').addEventListener('click', function () { resizeCopy(-3); });
   $('biggerBtn').addEventListener('click', function () { resizeCopy(3); });
+  $('externalBtn').addEventListener('click', openExternal);
+  $('closeSaveBtn').addEventListener('click', closeSaveSheet);
+  $('saveSheet').addEventListener('click', function (e) { if (e.target === $('saveSheet')) closeSaveSheet(); });
   document.addEventListener('keydown', function (e) {
     if (e.key !== 'Escape') return;
-    if (!$('copy').hidden) closeCopy();
+    if (!$('saveSheet').hidden) closeSaveSheet();
+    else if (!$('copy').hidden) closeCopy();
     else if (!$('overlay').hidden) closeCard();
   });
+  openFromHash();
 })();
